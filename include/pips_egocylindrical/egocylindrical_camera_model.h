@@ -33,6 +33,19 @@ namespace pips
         
         cv::Point2d project3dToPixel(const cv::Point3d& point)
         {
+          
+          /*
+          // Verified that functions are inverses of each other
+          cv::Point2d projected = model_.project3dToPixel(point);
+          
+          double dist = std::sqrt(point.x*point.x + point.y*point.y + point.z*point.z);
+          cv::Point3d ray = point / dist;
+          
+          cv::Point3d pixel_ray = projectPixelTo3dRay(projected);
+          
+          ROS_INFO_STREAM("World point: " << point << ", unit vector: " << ray << ", pixel: " << projected << ", pixel_ray: " << pixel_ray);
+          */
+          
           return model_.project3dToPixel(point);
         }
         
@@ -47,7 +60,7 @@ namespace pips
           
           if(left < right)
           {
-            for(int i = left; left < right; ++i)
+            for(int i = left; i < right; ++i)
             {
               cols.push_back(i);
             }
