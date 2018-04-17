@@ -82,7 +82,7 @@ namespace pips
         
         float getPixelValue(const cv::Point3d& point)
         {
-          return point.z;
+          return egocylindrical::utils::worldToRange(point);
         }
       
       
