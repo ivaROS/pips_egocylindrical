@@ -141,6 +141,25 @@ target_compile_options(${PROJECT_NAME}_collision_checker PUBLIC -std=c++11 -Wall
   #${OpenMP_CXX_FLAGS}
   )
 
+  
+  
+add_library(${PROJECT_NAME}_cc_wrapper
+  src/egocylindrical_image_cc_wrapper.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_cc_wrapper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_cc_wrapper
+  ${PROJECT_NAME}_collision_checker
+  ${catkin_LIBRARIES}
+)
+
+target_compile_options(${PROJECT_NAME}_cc_wrapper PUBLIC -std=c++11 -Wall
+  )
+  
+  
+  
 ## Declare a C++ library
 add_library(${PROJECT_NAME}_controller
   src/egocylindrical_controller.cpp
@@ -153,7 +172,7 @@ add_dependencies(${PROJECT_NAME}_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} 
 
 # Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_controller
-  ${PROJECT_NAME}_collision_checker
+  ${PROJECT_NAME}_cc_wrapper
   ${catkin_LIBRARIES}
 )
 
