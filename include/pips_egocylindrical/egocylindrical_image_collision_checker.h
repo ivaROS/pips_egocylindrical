@@ -18,11 +18,13 @@ namespace pips
       
     public:
       
-      EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh);
+      EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME);
       
       
       void setImage(const sensor_msgs::ImageConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
-      
+
+      static constexpr const char* DEFAULT_NAME="egocylindrical_image_collision_checker";
+
       
     private:
       std::shared_ptr<pips::utils::AbstractCameraModel> getCameraModel();

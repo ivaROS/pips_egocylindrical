@@ -8,8 +8,8 @@ namespace pips
   {
     
 
-    EgocylindricalImageCollisionChecker::EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh) : 
-      PipsCollisionChecker(nh,pnh)
+    EgocylindricalImageCollisionChecker::EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name) : 
+      PipsCollisionChecker(nh,pnh,name)
     {
       
     }

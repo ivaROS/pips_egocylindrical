@@ -1,5 +1,5 @@
-#ifndef DEPTH_IMAGE_CC_WRAPPER_H
-#define DEPTH_IMAGE_CC_WRAPPER_H
+#ifndef EGOCYLINDRICAL_IMAGE_CC_WRAPPER_H
+#define EGOCYLINDRICAL_IMAGE_CC_WRAPPER_H
 
 #include <pips_trajectory_testing/pips_cc_wrapper.h>
 #include <pips_egocylindrical/egocylindrical_image_collision_checker.h>
@@ -46,8 +46,11 @@ private:
   
 public:
   EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh);
-  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer>& tf_buffer);
+  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer> tf_buffer=std::make_shared<tf2_ros::Buffer>(), const std::string& name=DEFAULT_NAME);
   
+  
+  static constexpr const char* DEFAULT_NAME="egocylindrical_image_cc_wrapper";
+
   
   bool init();
   
@@ -66,4 +69,4 @@ public:
 
 }
 
-#endif //DEPTH_IMAGE_CC_WRAPPER_H
+#endif //EGOCYLINDRICAL_IMAGE_CC_WRAPPER_H

@@ -5,16 +5,16 @@ namespace pips_egocylindrical
 {
 
 EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
-    PipsCCWrapper(nh,pnh,"depth_image_cc_wrapper")
+    PipsCCWrapper(nh,pnh,"egocylindrical_image_cc_wrapper")
 {
-    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh);
+    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
 }
 
 
-EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer>& tf_buffer) :
-    PipsCCWrapper(nh,pnh,"depth_image_cc_wrapper", tf_buffer)
+EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer> tf_buffer, const std::string& name) :
+    PipsCCWrapper(nh,pnh,name, tf_buffer)
 {
-    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh);
+    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
 }
 
 bool EgocylindricalRangeImageCCWrapper::init()
@@ -24,6 +24,10 @@ bool EgocylindricalRangeImageCCWrapper::init()
     
     pnh_.getParam("egocylindrical_image_topic", depth_image_topic );
     pnh_.getParam("egocylindrical_info_topic", depth_info_topic );
+    
+        // The idea here is to set the parameter on the parameter server to the default value to make it easier to see what it is.
+    pnh_.setParam("egocylindrical_image_topic", depth_image_topic);
+    pnh_.setParam("egocylindrical_info_topic", depth_info_topic );
     
     // TODO: use parameters for base_frame_id and odom_frame_id
     
