@@ -39,8 +39,12 @@ namespace pips_egocylindrical
 
     else
     {
-        cc_wrapper_->update();
-      return cc_wrapper_->isReady(header);
+        bool ready = cc_wrapper_->isReady(header);
+        if(ready)
+        {
+            cc_wrapper_->update();
+        }
+      return ready;
     }
   }
   

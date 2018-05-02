@@ -56,6 +56,8 @@ public:
   
   void update();
 
+  bool isReady(const std_msgs::Header& header);
+
   
   std_msgs::Header getCurrentHeader();
   

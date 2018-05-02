@@ -52,21 +52,16 @@ bool EgocylindricalRangeImageCCWrapper::init()
 
 }
 
+bool EgocylindricalRangeImageCCWrapper::isReady(const std_msgs::Header& header)
+{
+    //Note: could add condition based on time difference between request and current image/info
+    return current_camInfo && current_image && PipsCCWrapper::isReady(current_camInfo->header);
+}
 
 void EgocylindricalRangeImageCCWrapper::update()
 {
-    if ( isReady ( current_image->header ) ) 
-    {
-        cc_->setImage ( current_image, current_camInfo );
-        /*
-        if ( _visualize ) {
-            boost::mutex::scoped_lock l ( copy_mutex );
-            imageVisualize = current_raw_image.clone();
-            trajectoryProjectionHeader = current_image->header;
-            visualizeReady = true;
-        }
-        */
-    }
+    ROS_DEBUG_STREAM_NAMED ( name_, "Updating collision checker image" );
+    cc_->setImage ( current_image, current_camInfo );
 }
 
     
@@ -81,28 +76,10 @@ void EgocylindricalRangeImageCCWrapper::ecImageCb (const sensor_msgs::Image::Con
         return;
     }
 
-    // TODO: Not sure if this condition is necessary
-    //if ( isReady ( image_msg->header ) ) 
-    {
 
-        //Update tester with new data
-        ROS_DEBUG_STREAM_NAMED ( name_, "Updating collision checker image" );
-        current_image = image_msg;
-        current_camInfo = info_msg;
-        /*
-        if ( _visualize ) {
-            try {
-                boost::shared_ptr<void const> tracked_object_disp;
-                boost::mutex::scoped_lock l ( copy_mutex );
-                current_raw_image = cv_bridge::toCvCopy ( *raw_image_msg, sensor_msgs::image_encodings::BGR8 )->image;
-            } catch ( ... ) {
-                ROS_ERROR ( "Exception within cost map callback function\n" );
-            }
-        }
-        */
+    current_image = image_msg;
+    current_camInfo = info_msg;
 
-
-    }
     doCallback();
 }
 
