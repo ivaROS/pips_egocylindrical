@@ -10,20 +10,9 @@
 ** Includes
 *****************************************************************************/
 // %Tag(FULLTEXT)%
-#include "obstacle_avoidance_controller.h"
-#include "pips_trajectory_tester.h"
+#include <turtlebot_trajectory_testing/obstacle_avoidance_controller.h>
 
 #include <pips_trajectory_testing/pips_cc_wrapper.h>
-
-#include <sensor_msgs/Image.h>
-#include <message_filters/subscriber.h>
-#include <message_filters/time_synchronizer.h>
-#include <message_filters/sync_policies/exact_time.h>
-#include <message_filters/sync_policies/approximate_time.h>
-
-#include <memory>
-
-#include <ros/callback_queue.h>
 
 
 namespace pips_egocylindrical
@@ -37,14 +26,16 @@ namespace pips_egocylindrical
  *
  * A simple nodelet-based controller intended to avoid obstacles using PIPS.
  */
-class PipsEgocylindricalTrajectoryController : public kobuki::ObstacleAvoidanceController
+class PipsEgocylindricalTrajectoryController : public turtlebot_trajectory_testing::TurtlebotObstacleAvoidanceController
 {
 public:
-  PipsEgocylindricalTrajectoryController(ros::NodeHandle& nh, ros::NodeHandle& pnh);
+  PipsEgocylindricalTrajectoryController(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME);
   ~PipsEgocylindricalTrajectoryController(){};
 
   virtual bool init();
-
+  
+  static constexpr const char* DEFAULT_NAME= "EgocylindricalController";
+  
 protected:
   bool isReady(const std_msgs::Header& header);
   
@@ -56,11 +47,12 @@ protected:
 
   
 private:
-  std::string name_ = "EgocylindricalController";
-  ros::NodeHandle nh_, pnh_;
+  std::string name_;
+  ros::NodeHandle pnh_;
   
   std::shared_ptr<pips_trajectory_testing::PipsCCWrapper> cc_wrapper_;      
-
+  
+  typedef turtlebot_trajectory_testing::TurtlebotObstacleAvoidanceController Super;
 
 };
 

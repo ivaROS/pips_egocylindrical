@@ -10,7 +10,7 @@ project(pips_egocylindrical)
 find_package(catkin REQUIRED COMPONENTS
   egocylindrical
   pips
-  pips_trajectory_testing
+  turtlebot_trajectory_testing
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +105,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES pips_egocylindrical
-  CATKIN_DEPENDS egocylindrical pips pips_trajectory_testing
+  CATKIN_DEPENDS egocylindrical pips turtlebot_trajectory_testing
 #  DEPENDS system_lib
 )
 

@@ -27,7 +27,7 @@ private:
   typedef message_filters::Synchronizer<approx_image_sync_policy> time_synchronizer;
     
   typedef tf2_ros::MessageFilter<egocylindrical::EgoCylinderPoints> tf_filter;
-  
+  typedef pips_trajectory_testing::PipsCCWrapper Super;
   
   boost::shared_ptr<tf_filter> info_tf_filter_;
   boost::shared_ptr<time_synchronizer> image_synchronizer_;
@@ -38,14 +38,17 @@ private:
   sensor_msgs::Image::ConstPtr current_image;
   egocylindrical::EgoCylinderPoints::ConstPtr current_camInfo;
   
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  
+  static constexpr const int MAGIC_NUMBER = -17;  //The sole purpose of this is to ensure that the constructor with the 'optional' tfbuffer argument is not accidentally passed a tfbuffer object
+  
   std::shared_ptr<pips::collision_testing::EgocylindricalImageCollisionChecker> cc_;
   
     
-  void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg,
-                                                  const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
+  void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
   
 public:
-  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh);
+  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME, int tamper_prevention = MAGIC_NUMBER, std::shared_ptr<tf2_ros::Buffer> tf_buffer=std::make_shared<tf2_ros::Buffer>());
   EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer> tf_buffer=std::make_shared<tf2_ros::Buffer>(), const std::string& name=DEFAULT_NAME);
   
   
@@ -56,12 +59,12 @@ public:
   
   void update();
 
-  bool isReady(const std_msgs::Header& header);
-
+  bool isReadyImpl();
+  
   
   std_msgs::Header getCurrentHeader();
   
-  std::shared_ptr<PipsCollisionChecker> getCC()
+  std::shared_ptr<pips::collision_testing::TransformingCollisionChecker> getCC()
   {
     return cc_;
   }
