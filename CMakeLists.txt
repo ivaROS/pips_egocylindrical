@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES pips_egocylindrical
+  LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker
   CATKIN_DEPENDS egocylindrical pips turtlebot_trajectory_testing
 #  DEPENDS system_lib
 )
