@@ -24,7 +24,7 @@ namespace pips_egocylindrical
     traj_tester_->init();
     traj_tester2_ = traj_tester_;
         
-    cc_wrapper_ = std::make_shared<pips_egocylindrical::EgocylindricalRangeImageCCWrapper>(nh_, pnh_,tfBuffer_);
+    cc_wrapper_ = std::make_shared<pips_egocylindrical::EgocylindricalRangeImageCCWrapper>(nh_, pnh_, tfm_);
     traj_tester_->setCollisionChecker(cc_wrapper_->getCC());
 }
   

@@ -4,20 +4,15 @@
 namespace pips_egocylindrical
 {
 
-EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name, const int tamper_prevention, std::shared_ptr<tf2_ros::Buffer> tf_buffer) :
-  PipsCCWrapper(nh,pnh,name,tf_buffer)
+EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name, const tf2_utils::TransformManager& tfm) :
+  PipsCCWrapper(nh,pnh,name,tfm)
 {
-    // If a tfbuffer was not provided by the user, then we need to set up a listener
-    if(tamper_prevention == MAGIC_NUMBER)
-    {
-      tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
-    }
     cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
 }
 
 
-EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer>& tf_buffer, const std::string& name) :
-    PipsCCWrapper(nh,pnh,name, tf_buffer)
+EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const tf2_utils::TransformManager& tfm, const std::string& name) :
+  PipsCCWrapper(nh,pnh,name,tfm)
 {
     cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
 }
@@ -44,15 +39,13 @@ bool EgocylindricalRangeImageCCWrapper::init()
 
     image_transport::ImageTransport it ( nh_ );
     
-    //PipsCCWrapper::fixed_frame_id_ = "world";
-    
     //pub_trajectoryProjection = it.advertise ( "trajectoryProjection", 1 );
 
     ec_sub_.subscribe(it, depth_image_topic, 1);
     ec_info_sub_.subscribe(nh_, depth_info_topic, 1);
 
     // Ensure that CameraInfo is transformable
-    info_tf_filter_ = boost::make_shared<tf_filter>(ec_info_sub_, *tf_buffer_, PipsCCWrapper::fixed_frame_id_, 2,nh_);
+    info_tf_filter_ = boost::make_shared<tf_filter>(ec_info_sub_, *tfm_.getBuffer(), PipsCCWrapper::fixed_frame_id_, 2,nh_);
     
     // Synchronize Image and CameraInfo callbacks
     image_synchronizer_ = boost::make_shared<time_synchronizer>(time_synchronizer(10),ec_sub_, *info_tf_filter_);

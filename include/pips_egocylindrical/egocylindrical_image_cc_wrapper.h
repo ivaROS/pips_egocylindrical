@@ -19,7 +19,8 @@ namespace pips_egocylindrical
 
 class EgocylindricalRangeImageCCWrapper : public pips_trajectory_testing::PipsCCWrapper
 {
-
+public:
+  static constexpr const char* DEFAULT_NAME="egocylindrical_image_cc_wrapper";
   
 private:
   typedef message_filters::sync_policies::ExactTime<sensor_msgs::Image, egocylindrical::EgoCylinderPoints> exact_image_sync_policy;
@@ -38,29 +39,19 @@ private:
   sensor_msgs::Image::ConstPtr current_image;
   egocylindrical::EgoCylinderPoints::ConstPtr current_camInfo;
   
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  
-  static constexpr const int MAGIC_NUMBER = -17;  //The sole purpose of this is to ensure that the constructor with the 'optional' tfbuffer argument is not accidentally passed a tfbuffer object
-  
   std::shared_ptr<pips::collision_testing::EgocylindricalImageCollisionChecker> cc_;
   
-    
-  void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
   
 public:
-  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME, int tamper_prevention = MAGIC_NUMBER, std::shared_ptr<tf2_ros::Buffer> tf_buffer=std::make_shared<tf2_ros::Buffer>());
-  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, std::shared_ptr<tf2_ros::Buffer>& tf_buffer, const std::string& name=DEFAULT_NAME);
+  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME, const tf2_utils::TransformManager& tfm=tf2_utils::TransformManager(false));
   
-  
-  static constexpr const char* DEFAULT_NAME="egocylindrical_image_cc_wrapper";
+  EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const tf2_utils::TransformManager& tfm, const std::string& name=DEFAULT_NAME);
 
-  
   bool init();
   
   void update();
 
   bool isReadyImpl();
-  
   
   std_msgs::Header getCurrentHeader();
   
@@ -69,7 +60,9 @@ public:
     return cc_;
   }
   
-
+private:
+  void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
+  
 };
 
 }
