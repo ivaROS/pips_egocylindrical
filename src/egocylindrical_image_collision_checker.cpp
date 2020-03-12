@@ -23,6 +23,7 @@ namespace pips
     void EgocylindricalImageCollisionChecker::setImage(const sensor_msgs::ImageConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg)
     {
       cam_model_->setInfo(info_msg);
+      cam_model_->update();
       
       PipsCollisionChecker::setImage(image_msg);
     }
