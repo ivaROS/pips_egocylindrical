@@ -7,14 +7,14 @@ namespace pips_egocylindrical
 EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name, const tf2_utils::TransformManager& tfm) :
   PipsCCWrapper(nh,pnh,name,tfm)
 {
-    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
+    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_, tfm);
 }
 
 
 EgocylindricalRangeImageCCWrapper::EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const tf2_utils::TransformManager& tfm, const std::string& name) :
   PipsCCWrapper(nh,pnh,name,tfm)
 {
-    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_);
+    cc_ = std::make_shared<pips::collision_testing::EgocylindricalImageCollisionChecker>(nh, pnh_, tfm);
 }
 
 bool EgocylindricalRangeImageCCWrapper::init()
@@ -24,7 +24,7 @@ bool EgocylindricalRangeImageCCWrapper::init()
     PipsCCWrapper::init();
   
     // Get topic names
-    std::string depth_image_topic="egocylinder/image", depth_info_topic= "/egocylinder/data";
+    std::string depth_image_topic="egocylinder/image", depth_info_topic= "/egocylinder/egocylinder_info";
     
     pnh_.getParam("egocylindrical_image_topic", depth_image_topic );
     pnh_.getParam("egocylindrical_info_topic", depth_info_topic );
@@ -84,6 +84,7 @@ bool EgocylindricalRangeImageCCWrapper::isReadyImpl()
 void EgocylindricalRangeImageCCWrapper::ecImageCb (const sensor_msgs::Image::ConstPtr& image_msg,
                                                   const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg)
 {
+    ROS_DEBUG_STREAM_NAMED(name_ + ".image_callback", "Received synchronized messages with image stamp " << image_msg->header.stamp << " and info stamp " << info_msg->header.stamp);
     if ( image_msg->header.stamp == ros::Time ( 0 ) || info_msg->header.stamp == ros::Time ( 0 ) ) { // Gazebo occasionally publishes Image and CameraInfo messages with time=0
         ROS_WARN_STREAM_NAMED ( name_,"Bad timestamp" );
         return;

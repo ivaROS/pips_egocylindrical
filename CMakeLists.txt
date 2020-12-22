@@ -10,8 +10,12 @@ project(pips_egocylindrical)
 find_package(catkin REQUIRED COMPONENTS
   egocylindrical
   pips
-  turtlebot_trajectory_testing
+  #turtlebot_trajectory_testing
+  pips_trajectory_testing
 )
+
+
+find_package(Eigen3)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -105,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker
-  CATKIN_DEPENDS egocylindrical pips turtlebot_trajectory_testing
+  CATKIN_DEPENDS egocylindrical pips pips_trajectory_testing #turtlebot_trajectory_testing
 #  DEPENDS system_lib
 )
 
@@ -117,6 +121,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  ${EIGEN3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -161,20 +166,20 @@ target_compile_options(${PROJECT_NAME}_cc_wrapper PUBLIC -std=c++11 -Wall
   
   
 ## Declare a C++ library
-add_library(${PROJECT_NAME}_controller
-  src/egocylindrical_controller.cpp
-)
+#add_library(${PROJECT_NAME}_controller
+#  src/egocylindrical_controller.cpp
+#)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-add_dependencies(${PROJECT_NAME}_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-# Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_controller
-  ${PROJECT_NAME}_cc_wrapper
-  ${catkin_LIBRARIES}
-)
+## Specify libraries to link a library or executable target against
+#target_link_libraries(${PROJECT_NAME}_controller
+#  ${PROJECT_NAME}_cc_wrapper
+#  ${catkin_LIBRARIES}
+#)
 
 # target_compile_options(${PROJECT_NAME}_controller PUBLIC -std=c++11 -Wall
 #   #${OpenMP_CXX_FLAGS}
@@ -183,21 +188,32 @@ target_link_libraries(${PROJECT_NAME}_controller
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_controller_node src/egocylindrical_controller_node.cpp)
+#add_executable(${PROJECT_NAME}_controller_node src/egocylindrical_controller_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_controller_node PROPERTIES OUTPUT_NAME controller_node PREFIX "")
+#set_target_properties(${PROJECT_NAME}_controller_node PROPERTIES OUTPUT_NAME controller_node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_controller_node
-  ${PROJECT_NAME}_controller
+#target_link_libraries(${PROJECT_NAME}_controller_node
+#  ${PROJECT_NAME}_controller
+#  ${catkin_LIBRARIES}
+#)
+
+
+add_executable(${PROJECT_NAME}_cc_node src/egocylindrical_cc_node.cpp)
+
+
+set_target_properties(${PROJECT_NAME}_cc_node PROPERTIES OUTPUT_NAME egocylindrical_cc_node PREFIX "")
+add_dependencies(${PROJECT_NAME}_cc_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_cc_node
+  ${PROJECT_NAME}_cc_wrapper
   ${catkin_LIBRARIES}
 )
 

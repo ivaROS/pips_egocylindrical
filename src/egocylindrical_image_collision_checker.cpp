@@ -7,12 +7,13 @@ namespace pips
   namespace collision_testing
   {
     
-
-    EgocylindricalImageCollisionChecker::EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name) : 
-      PipsCollisionChecker(nh,pnh,name)
-    {
-      
-    }
+    EgocylindricalImageCollisionChecker::EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name, const tf2_utils::TransformManager& tfm):
+      PipsCollisionChecker(nh,pnh,tfm,name)
+    {}
+    
+    EgocylindricalImageCollisionChecker::EgocylindricalImageCollisionChecker(ros::NodeHandle& nh, ros::NodeHandle& pnh, const tf2_utils::TransformManager& tfm, const std::string& name):
+      PipsCollisionChecker(nh,pnh,tfm,name)
+    {}
 
     std::shared_ptr<pips::utils::AbstractCameraModel> EgocylindricalImageCollisionChecker::getCameraModel()
     {
