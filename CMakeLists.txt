@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   pips
   #turtlebot_trajectory_testing
   pips_trajectory_testing
+  message_generation
+  geometry_msgs
 )
 
 
@@ -58,11 +60,10 @@ find_package(Eigen3)
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  FreeSpaceCheckerService.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -72,10 +73,10 @@ find_package(Eigen3)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -108,8 +109,8 @@ find_package(Eigen3)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker
-  CATKIN_DEPENDS egocylindrical pips pips_trajectory_testing #turtlebot_trajectory_testing
+  LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker ${PROJECT_NAME}_egocan_cc_wrapper ${PROJECT_NAME}_egocan_collision_checker
+  CATKIN_DEPENDS egocylindrical pips pips_trajectory_testing message_runtime geometry_msgs #turtlebot_trajectory_testing
 #  DEPENDS system_lib
 )
 
@@ -146,6 +147,19 @@ target_compile_options(${PROJECT_NAME}_collision_checker PUBLIC -std=c++11 -Wall
   #${OpenMP_CXX_FLAGS}
   )
 
+
+
+
+add_library(${PROJECT_NAME}_egocan_collision_checker src/egocan_collision_checker.cpp)
+
+#set_target_properties(${PROJECT_NAME}_cc_node PROPERTIES OUTPUT_NAME egocan_collision_checker PREFIX "")
+add_dependencies(${PROJECT_NAME}_egocan_collision_checker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_egocan_collision_checker
+  ${catkin_LIBRARIES}
+)
+target_compile_options(${PROJECT_NAME}_egocan_collision_checker PUBLIC -std=c++11 -Wall
+  )
+  
   
   
 add_library(${PROJECT_NAME}_cc_wrapper
@@ -162,7 +176,24 @@ target_link_libraries(${PROJECT_NAME}_cc_wrapper
 
 target_compile_options(${PROJECT_NAME}_cc_wrapper PUBLIC -std=c++11 -Wall
   )
+
   
+  
+  
+add_library(${PROJECT_NAME}_egocan_cc_wrapper
+  src/egocan_cc_wrapper.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_egocan_cc_wrapper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_egocan_cc_wrapper
+  ${PROJECT_NAME}_egocan_collision_checker
+  ${catkin_LIBRARIES}
+)
+
+target_compile_options(${PROJECT_NAME}_egocan_cc_wrapper PUBLIC -std=c++11 -Wall
+  )
   
   
 ## Declare a C++ library
@@ -216,6 +247,8 @@ target_link_libraries(${PROJECT_NAME}_cc_node
   ${PROJECT_NAME}_cc_wrapper
   ${catkin_LIBRARIES}
 )
+
+
 
 #############
 ## Install ##

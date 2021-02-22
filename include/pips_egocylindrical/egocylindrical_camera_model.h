@@ -6,7 +6,7 @@
 #include <egocylindrical/ecwrapper.h>
 //#include <opencv2/core/core.hpp>
 
-
+//NOTE: The namespace should probably be changed from pips::utils to pips_egocylindrical
 namespace pips
 {
   namespace utils
