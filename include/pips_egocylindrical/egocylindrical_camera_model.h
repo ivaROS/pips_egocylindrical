@@ -84,6 +84,11 @@ namespace pips
         {
           return egocylindrical::utils::worldToRange(point);
         }
+        
+        const egocylindrical::utils::ECConverter& getModel() const
+        {
+          return model_;
+        }
       
       
     };

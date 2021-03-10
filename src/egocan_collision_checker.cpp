@@ -228,7 +228,7 @@ namespace pips_egocylindrical
       {
         for(int zind = startz; zind <= endz; zind++)
         {
-          int can_ind = converter_.pixToCanIdx(xind, zind, y);
+          int can_ind = converter_.pixToCanIdx(xind, zind, y) -  converter_.getCols();  //Really need a better way of differentiating between when acting on egocan image vs combined egocan-egocylinder data
           float depth = can_image[can_ind];
           if(depth > 0 && depth < min_depth)
           {
