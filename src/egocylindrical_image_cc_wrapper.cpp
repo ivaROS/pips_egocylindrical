@@ -41,11 +41,13 @@ bool EgocylindricalRangeImageCCWrapper::init()
     
     //pub_trajectoryProjection = it.advertise ( "trajectoryProjection", 1 );
 
-    ec_sub_.subscribe(it, depth_image_topic, 1);
+    auto transport_hints = ros::TransportHints().tcpNoDelay(true);
+    ec_sub_.subscribe(it, depth_image_topic, 1, image_transport::TransportHints("raw", transport_hints));
     ec_info_sub_.subscribe(nh_, depth_info_topic, 1);
     
     ec_sub_.registerCallback([this](const sensor_msgs::Image::ConstPtr& image_msg){ROS_DEBUG_STREAM_NAMED("msg_timestamps.detailed", "[" << name_ << "] Received image msg [" << image_msg->header.stamp << "] at [" << ros::WallTime::now() << "]");});
-
+    ec_info_sub_.registerCallback([this](const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg){ROS_DEBUG_STREAM_NAMED("msg_timestamps.detailed", "[" << name_ << "] Received info msg [" << info_msg->header.stamp << "] at [" << ros::WallTime::now() << "]");});
+    
     // Ensure that CameraInfo is transformable
     info_tf_filter_ = boost::make_shared<tf_filter>(ec_info_sub_, *tfm_.getBuffer(), PipsCCWrapper::fixed_frame_id_, 2,nh_);
     
