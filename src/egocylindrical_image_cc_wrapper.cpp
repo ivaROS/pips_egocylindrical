@@ -43,6 +43,8 @@ bool EgocylindricalRangeImageCCWrapper::init()
 
     ec_sub_.subscribe(it, depth_image_topic, 1);
     ec_info_sub_.subscribe(nh_, depth_info_topic, 1);
+    
+    ec_sub_.registerCallback([this](const sensor_msgs::Image::ConstPtr& image_msg){ROS_DEBUG_STREAM_NAMED("msg_timestamps.detailed", "[" << name_ << "] Received image msg [" << image_msg->header.stamp << "] at [" << ros::WallTime::now() << "]");});
 
     // Ensure that CameraInfo is transformable
     info_tf_filter_ = boost::make_shared<tf_filter>(ec_info_sub_, *tfm_.getBuffer(), PipsCCWrapper::fixed_frame_id_, 2,nh_);
@@ -84,6 +86,7 @@ bool EgocylindricalRangeImageCCWrapper::isReadyImpl()
 void EgocylindricalRangeImageCCWrapper::ecImageCb (const sensor_msgs::Image::ConstPtr& image_msg,
                                                   const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg)
 {
+    ROS_DEBUG_STREAM_NAMED("msg_timestamps.detailed", "[" << name_ << "] Received syncronized messages [" << image_msg->header.stamp << "] at [" << ros::WallTime::now() << "]");
     ROS_DEBUG_STREAM_NAMED(name_ + ".image_callback", "Received synchronized messages with image stamp " << image_msg->header.stamp << " and info stamp " << info_msg->header.stamp);
     if ( image_msg->header.stamp == ros::Time ( 0 ) || info_msg->header.stamp == ros::Time ( 0 ) ) { // Gazebo occasionally publishes Image and CameraInfo messages with time=0
         ROS_WARN_STREAM_NAMED ( name_,"Bad timestamp" );
