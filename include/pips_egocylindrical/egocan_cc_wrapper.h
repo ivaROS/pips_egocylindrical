@@ -64,6 +64,12 @@ public:
     return cc_;
   }
   
+  virtual bool publishersExist()
+  {
+    return ec_sub_.getNumPublishers()>0 && ec_info_sub_.getSubscriber().getNumPublishers()>0;
+  }
+  
+  
 private:
   void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
   
