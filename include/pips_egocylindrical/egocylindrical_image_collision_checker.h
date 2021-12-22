@@ -13,7 +13,7 @@ namespace pips
     
     class EgocylindricalImageCollisionChecker : public PipsCollisionChecker, public pips_egocylindrical::FreeSpaceChecker
     {
-    private:
+    protected:
       std::shared_ptr<pips::utils::EgocylindricalCameraModel> cam_model_;
       
       
