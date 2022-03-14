@@ -24,16 +24,19 @@ bool EgoCanCCWrapper::init()
     PipsCCWrapper::init();
   
     // Get topic names
-    std::string egocan_image_topic="egocylinder/can_image", egocan_info_topic= "/egocylinder/egocylinder_info";
+    std::string egocan_image_topic="/egocylinder/can_image", egocan_info_topic= "/egocylinder/egocylinder_info";
     
+    /*
     pnh_.getParam("egocan_image_topic", egocan_image_topic );
     pnh_.getParam("egocan_info_topic", egocan_info_topic );
     
         // The idea here is to set the parameter on the parameter server to the default value to make it easier to see what it is.
     pnh_.setParam("egocan_image_topic", egocan_image_topic);
     pnh_.setParam("egocan_info_topic", egocan_info_topic );
-    
-    // TODO: use parameters for base_frame_id and odom_frame_id
+    */
+        
+    bool res = pips::utils::get_param(pnh_, "egocan_image_topic", egocan_image_topic, egocan_image_topic, 10);
+    res &= pips::utils::get_param(pnh_, "egocan_info_topic", egocan_info_topic, egocan_info_topic, 10);
     
     ROS_DEBUG_STREAM_NAMED ( name_,  "Setting up publishers and subscribers" );
 

@@ -24,16 +24,19 @@ bool EgocylindricalRangeImageCCWrapper::init()
     PipsCCWrapper::init();
   
     // Get topic names
-    std::string depth_image_topic="egocylinder/image", depth_info_topic= "/egocylinder/egocylinder_info";
+    std::string depth_image_topic="/egocylinder/image", depth_info_topic= "/egocylinder/egocylinder_info";
     
+    /*
     pnh_.getParam("egocylindrical_image_topic", depth_image_topic );
     pnh_.getParam("egocylindrical_info_topic", depth_info_topic );
     
         // The idea here is to set the parameter on the parameter server to the default value to make it easier to see what it is.
     pnh_.setParam("egocylindrical_image_topic", depth_image_topic);
     pnh_.setParam("egocylindrical_info_topic", depth_info_topic );
+    */
     
-    // TODO: use parameters for base_frame_id and odom_frame_id
+    bool res = pips::utils::get_param(pnh_, "egocylindrical_image_topic", depth_image_topic, depth_image_topic, 10);
+    res &= pips::utils::get_param(pnh_, "egocylindrical_info_topic", depth_info_topic, depth_info_topic, 10);
     
     ROS_DEBUG_STREAM_NAMED ( name_,  "Setting up publishers and subscribers" );
 
