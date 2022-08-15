@@ -211,9 +211,9 @@ namespace pips_egocylindrical
     auto get_min_depth = [this, can_image, get_search_size, can_width](float x, float y, float z)
     {      
       int search_window = get_search_size(y);
-      
-      int xpix = converter_.worldToCanXIdx(x, y, z);
-      int zpix = converter_.worldToCanZIdx(x, y, z);
+      cv::Point3f pnt(x,y,z);
+      int xpix = converter_.worldToCanXIdx(pnt);
+      int zpix = converter_.worldToCanZIdx(pnt);
       
       int startx = std::max(xpix-search_window, 0);
       int endx = std::min(xpix+search_window, can_width-1);
