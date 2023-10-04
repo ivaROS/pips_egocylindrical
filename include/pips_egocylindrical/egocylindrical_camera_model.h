@@ -85,6 +85,14 @@ namespace pips
           return egocylindrical::utils::worldToRange(point);
         }
         
+        cv::Size getImageSize() const
+        {
+            int height = info_msg_->points.layout.dim[1].size;
+            int width = info_msg_->points.layout.dim[2].size;
+            
+            return cv::Size(width, height);
+        }
+
         const egocylindrical::utils::ECConverter& getModel() const
         {
           return model_;

@@ -13,6 +13,8 @@
 #include <image_transport/image_transport.h>
 #include <image_transport/subscriber_filter.h>
 
+#include <boost/thread/mutex.hpp>
+
 
 namespace pips_egocylindrical
 {
@@ -32,7 +34,7 @@ private:
   
   boost::shared_ptr<tf_filter> info_tf_filter_;
   boost::shared_ptr<time_synchronizer> image_synchronizer_;
-    
+  
   image_transport::SubscriberFilter ec_sub_;
   message_filters::Subscriber<egocylindrical::EgoCylinderPoints> ec_info_sub_;
   
@@ -41,12 +43,15 @@ private:
   
   std::shared_ptr<pips::collision_testing::EgocylindricalImageCollisionChecker> cc_;
   
+  typedef boost::mutex::scoped_lock Lock;
+  boost::mutex mutex_;
+  
   
 public:
   EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const std::string& name=DEFAULT_NAME, const tf2_utils::TransformManager& tfm=tf2_utils::TransformManager(false));
   
   EgocylindricalRangeImageCCWrapper(ros::NodeHandle& nh, ros::NodeHandle& pnh, const tf2_utils::TransformManager& tfm, const std::string& name=DEFAULT_NAME);
-
+  
   bool init();
   
   void update();
@@ -64,8 +69,8 @@ public:
   {
     return ec_sub_.getNumPublishers()>0 && ec_info_sub_.getSubscriber().getNumPublishers()>0;
   }
-  
-  
+
+
 private:
   void ecImageCb(const sensor_msgs::Image::ConstPtr& image_msg, const egocylindrical::EgoCylinderPoints::ConstPtr& info_msg);
   

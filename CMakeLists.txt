@@ -10,13 +10,13 @@ project(pips_egocylindrical)
 find_package(catkin REQUIRED COMPONENTS
   egocylindrical
   pips
-  #turtlebot_trajectory_testing
+  turtlebot_trajectory_testing
   pips_trajectory_testing
   message_generation
   geometry_msgs
 )
 
-
+find_package(OpenMP)
 find_package(Eigen3)
 
 ## System dependencies are found with CMake's conventions
@@ -61,8 +61,8 @@ find_package(Eigen3)
 
 ## Generate services in the 'srv' folder
 add_service_files(
-  FILES
-  FreeSpaceCheckerService.srv
+ FILES
+ FreeSpaceCheckerService.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -74,8 +74,8 @@ add_service_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES
-  geometry_msgs  # Or other packages containing msgs
+ DEPENDENCIES
+ geometry_msgs
 )
 
 ################################################
@@ -109,8 +109,8 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker ${PROJECT_NAME}_egocan_cc_wrapper ${PROJECT_NAME}_egocan_collision_checker
-  CATKIN_DEPENDS egocylindrical pips pips_trajectory_testing message_runtime geometry_msgs #turtlebot_trajectory_testing
+  LIBRARIES ${PROJECT_NAME}_cc_wrapper ${PROJECT_NAME}_collision_checker ${PROJECT_NAME}_controller
+  CATKIN_DEPENDS egocylindrical pips turtlebot_trajectory_testing pips_trajectory_testing message_runtime geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -147,19 +147,6 @@ target_compile_options(${PROJECT_NAME}_collision_checker PUBLIC -std=c++11 -Wall
   #${OpenMP_CXX_FLAGS}
   )
 
-
-
-
-add_library(${PROJECT_NAME}_egocan_collision_checker src/egocan_collision_checker.cpp)
-
-#set_target_properties(${PROJECT_NAME}_cc_node PROPERTIES OUTPUT_NAME egocan_collision_checker PREFIX "")
-add_dependencies(${PROJECT_NAME}_egocan_collision_checker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME}_egocan_collision_checker
-  ${catkin_LIBRARIES}
-)
-target_compile_options(${PROJECT_NAME}_egocan_collision_checker PUBLIC -std=c++11 -Wall
-  )
-  
   
   
 add_library(${PROJECT_NAME}_cc_wrapper
@@ -175,42 +162,40 @@ target_link_libraries(${PROJECT_NAME}_cc_wrapper
 )
 
 target_compile_options(${PROJECT_NAME}_cc_wrapper PUBLIC -std=c++11 -Wall
-  )
-
-  
-  
-  
-add_library(${PROJECT_NAME}_egocan_cc_wrapper
-  src/egocan_cc_wrapper.cpp
 )
 
-add_dependencies(${PROJECT_NAME}_egocan_cc_wrapper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(egocylindrical_image_cc_node
+  src/egocylindrical_image_cc_node.cpp
+)
+
+add_dependencies(egocylindrical_image_cc_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_egocan_cc_wrapper
-  ${PROJECT_NAME}_egocan_collision_checker
+target_link_libraries(egocylindrical_image_cc_node
+  ${PROJECT_NAME}_cc_wrapper
   ${catkin_LIBRARIES}
 )
 
-target_compile_options(${PROJECT_NAME}_egocan_cc_wrapper PUBLIC -std=c++11 -Wall
-  )
+target_compile_options(egocylindrical_image_cc_node PUBLIC -std=c++11 -Wall
+)
   
   
 ## Declare a C++ library
-#add_library(${PROJECT_NAME}_controller
-#  src/egocylindrical_controller.cpp
-#)
+add_library(${PROJECT_NAME}_controller
+  src/egocylindrical_controller.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-#add_dependencies(${PROJECT_NAME}_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Specify libraries to link a library or executable target against
-#target_link_libraries(${PROJECT_NAME}_controller
-#  ${PROJECT_NAME}_cc_wrapper
-#  ${catkin_LIBRARIES}
-#)
+# Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_controller
+  ${PROJECT_NAME}_cc_wrapper
+  ${catkin_LIBRARIES}
+)
 
 # target_compile_options(${PROJECT_NAME}_controller PUBLIC -std=c++11 -Wall
 #   #${OpenMP_CXX_FLAGS}
@@ -219,24 +204,23 @@ target_compile_options(${PROJECT_NAME}_egocan_cc_wrapper PUBLIC -std=c++11 -Wall
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-#add_executable(${PROJECT_NAME}_controller_node src/egocylindrical_controller_node.cpp)
+add_executable(${PROJECT_NAME}_controller_node src/egocylindrical_controller_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-#set_target_properties(${PROJECT_NAME}_controller_node PROPERTIES OUTPUT_NAME controller_node PREFIX "")
+set_target_properties(${PROJECT_NAME}_controller_node PROPERTIES OUTPUT_NAME controller_node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-#add_dependencies(${PROJECT_NAME}_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Specify libraries to link a library or executable target against
-#target_link_libraries(${PROJECT_NAME}_controller_node
-#  ${PROJECT_NAME}_controller
-#  ${catkin_LIBRARIES}
-#)
-
+target_link_libraries(${PROJECT_NAME}_controller_node
+  ${PROJECT_NAME}_controller
+  ${catkin_LIBRARIES}
+)
 
 add_executable(${PROJECT_NAME}_cc_node src/egocylindrical_cc_node.cpp)
 
@@ -248,7 +232,47 @@ target_link_libraries(${PROJECT_NAME}_cc_node
   ${catkin_LIBRARIES}
 )
 
+# add_library(${PROJECT_NAME}_hybrid_controller
+#   src/hybrid_controller.cpp
+# )
 
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(${PROJECT_NAME}_hybrid_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_compile_options(${PROJECT_NAME}_hybrid_controller PUBLIC ${OpenMP_CXX_FLAGS})
+
+# Specify libraries to link a library or executable target against
+# target_link_libraries(${PROJECT_NAME}_hybrid_controller
+#   ${PROJECT_NAME}_cc_wrapper
+#   ${catkin_LIBRARIES}
+# )
+
+# target_compile_options(${PROJECT_NAME}_controller PUBLIC -std=c++11 -Wall
+#   #${OpenMP_CXX_FLAGS}
+#   )
+
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_hybrid_controller_node src/hybrid_controller_node.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_hybrid_controller_node PROPERTIES OUTPUT_NAME hybrid_controller_node PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(${PROJECT_NAME}_hybrid_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# Specify libraries to link a library or executable target against
+# target_link_libraries(${PROJECT_NAME}_hybrid_controller_node
+#   ${PROJECT_NAME}_hybrid_controller
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##

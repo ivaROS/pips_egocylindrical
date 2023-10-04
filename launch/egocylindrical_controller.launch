@@ -2,11 +2,12 @@
 <launch>
 
     <arg name="image" default="egocylinder/image"/>
-    <arg name="info" default="egocylinder/egocylindrical_points"/>
+    <arg name="info" default="egocylinder/data"/>
 
-    <node name="egocylindrical_controller" pkg="pips_egocylindrical" type="controller_node" >
+    <node name="egocylindrical_controller" pkg="pips_egocylindrical" type="controller_node" output="screen">
         <param name="egocylindrical_image_cc_wrapper/egocylindrical_image_topic" value="$(arg image)"/>
         <param name="egocylindrical_image_cc_wrapper/egocylindrical_info_topic" value="$(arg info)"/>
+        <param name="egocylindrical_image_cc_wrapper/robot_model/param_name" value="simplified_robot_description"/>
     </node>
     
 </launch>

@@ -51,16 +51,20 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>egocylindrical</build_depend>
   <build_depend>pips</build_depend>
+  <build_depend>turtlebot_trajectory_testing</build_depend>
   <build_depend>pips_trajectory_testing</build_depend>
   <build_depend>message_generation</build_depend>
   <depend>geometry_msgs</depend>
   <build_export_depend>egocylindrical</build_export_depend>
   <build_export_depend>pips</build_export_depend>
+  <build_export_depend>turtlebot_trajectory_testing</build_export_depend>
   <build_export_depend>pips_trajectory_testing</build_export_depend>
   <exec_depend>egocylindrical</exec_depend>
   <exec_depend>pips</exec_depend>
+  <exec_depend>turtlebot_trajectory_testing</exec_depend>
   <exec_depend>pips_trajectory_testing</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

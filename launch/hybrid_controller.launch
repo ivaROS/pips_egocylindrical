@@ -1,0 +1,26 @@
+
+<launch>
+
+    <arg name="ec_image" default="egocylinder/image"/>
+    <arg name="ec_info" default="egocylinder/data"/>
+    
+    <arg name="depth_image" default="camera/depth/image_raw"/>
+    <arg name="depth_info" default="camera/depth/camera_info"/>
+    
+    <arg name="defaults" default="false"/>
+
+    <!-- "valgrind - -tool=memcheck" -->
+    <!-- "xterm -e gdb -ex=r - -args" -->
+    
+    <node name="hybrid_controller" pkg="pips_egocylindrical" type="hybrid_controller_node" launch-prefix="" output="screen">
+        <param name="future_trajectory_collision_checker/egocylindrical_image_topic" value="$(arg ec_image)"/>
+        <param name="future_trajectory_collision_checker/egocylindrical_info_topic" value="$(arg ec_info)"/>
+
+        <param name="current_trajectory_collision_checker/depth_image_topic" value="$(arg depth_image)"/>
+        <param name="current_trajectory_collision_checker/depth_info_topic" value="$(arg depth_info)"/>
+
+        <rosparam command="load" file="$(find pips_egocylindrical)/param/ego_cc_defaults.yaml" ns="future_trajectory_collision_checker/" if="$(arg defaults)"/>
+        
+    </node>
+    
+</launch>
